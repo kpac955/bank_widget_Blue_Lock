@@ -1,13 +1,11 @@
 from typing import Union
 
 
-def get_mask_card_number(card_number: Union[int]) -> Union[str]:
+def get_mask_card_number(card_number: Union[str]) -> Union[str]:
     """Прописываем функцию маскировки номера банковской карты клиента"""
-    str_card_number = str(card_number)
-    return f"{str_card_number[0:4]} {str_card_number[4:6]}** **** {str_card_number[12:]} "
+    return f"{card_number[0:4]} {card_number[4:6]}** **** {card_number[12:]} "
 
 
-def get_mask_account(account_number: Union[int]) -> Union[str]:
+def get_mask_account(account_number: Union[str]) -> Union[str]:
     """Прописываем функцию маскировки номера счета клиента"""
-    str_account_number = str(account_number)
-    return f"** {str_account_number[2:]}"
+    return f"** {account_number[2:]}"
