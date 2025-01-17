@@ -12,4 +12,5 @@ def mask_account_card(type_and_number: Union[str]) -> Union[str]:
 
 
 def get_date(data: str) -> str:
+    """Функция которая возвращает строку в нужном формате"""
     return f'{data[8:10]}.{data[5:7]}.{data[0:4]}'
