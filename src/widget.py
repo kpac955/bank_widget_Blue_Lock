@@ -8,7 +8,7 @@ def mask_account_card(type_and_number: Union[str]) -> Union[str]:
     if "Счет" in type_and_number:
         return f"Счет {get_mask_account(type_and_number[-6:])}"
     else:
-        return f"{type_and_number[:-16]}{get_mask_card_number(type_and_number[-16:])}"
+        return f"{type_and_number[:-16]} {get_mask_card_number(type_and_number[-16:])}"
 
 
 def get_date(data: str) -> str:
