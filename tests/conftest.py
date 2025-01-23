@@ -4,6 +4,11 @@ import pytest
 
 
 @pytest.fixture()
+def acc_mask() -> Union[str]:
+    return "Счет 1111300734726758"
+
+
+@pytest.fixture()
 def mask_number() -> Union[str]:
     return "1236578513498654"
 
