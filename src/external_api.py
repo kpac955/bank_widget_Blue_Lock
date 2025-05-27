@@ -27,7 +27,7 @@ def convert(transactions: Dict[str, object]) -> float:
     amount_to = operation.get("amount", "0")
     try:
         amount = float(amount_to)
-    except(ValueError, TypeError):
+    except (ValueError, TypeError):
         return 0.0
     # извлекаем "currency" из словаря operation
     # если не словарь - возвращаем 0.0
@@ -45,11 +45,7 @@ def convert(transactions: Dict[str, object]) -> float:
         return 0.0
 
     headers = {"apikey": API_KEY}
-    params = {
-        "from": currency,
-        "to": "RUB",
-        "amount": amount
-    }
+    params = {"from": currency, "to": "RUB", "amount": amount}
     try:
         response = requests.get(URL, headers=headers, params=params)
         data = response.json()
