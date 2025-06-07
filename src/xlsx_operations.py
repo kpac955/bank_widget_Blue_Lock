@@ -9,6 +9,17 @@ logging.basicConfig(level=logging.INFO)
 
 
 class Operation(TypedDict):
+    """Cоздаем шаблон классов словаря банковской операции где:
+    id: Уникальный идентификатор операции.
+    state: статус операции
+    date: дата и время выполнения операции.
+    amount: сумма операции.
+    currency_name: название валюты.
+    currency_code: код валюты.
+    from_account: счет отправителя (может быть None).
+    to_account: счет получателя.
+    description: описание операции."""
+
     id: int
     state: str
     date: datetime
@@ -21,7 +32,7 @@ class Operation(TypedDict):
 
 
 def read_xlsx_operations(file_path: str) -> List[Operation]:
-    """Читает Excel файл и возвращает список словарей"""
+    """Функция читает и обрабатывает XLSX-файл с банковскими операциями, преобразуя данные в словари по шабалону."""
 
     logging.info(f"Идет чтение файла {file_path}")
 
