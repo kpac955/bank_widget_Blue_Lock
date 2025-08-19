@@ -19,7 +19,6 @@ def sort_by_date(list_dict: List[Dict], arg_sort: bool = True) -> List[Dict]:
     return sort_list
 
 
-
 def count_operations_by_categories(transactions: List[Dict], categories: List[str]) -> Dict[str, int]:
     """Подсчитывает операции по категориям из описания."""
     category_counter = Counter()
@@ -29,19 +28,6 @@ def count_operations_by_categories(transactions: List[Dict], categories: List[st
             if categorie.lower() in description:
                 category_counter[categorie] += 1
     return dict(category_counter)
-
-
-def process_bank_operations(data: list[dict], categories: list) -> dict:
-    """Подсчитывает количество операций по каждой категории на основе описания."""
-    category_counts = Counter()
-
-    for operation in data:
-        description = operation.get("description", "").lower()
-        for category in categories:
-            if category.lower() in description:
-                category_counts[category] += 1
-
-    return dict(category_counts)
 
 
 def process_bank_search(data: List[Dict], search: str) -> List[Dict]:
