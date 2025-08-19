@@ -1,4 +1,4 @@
-from src.processing import filter_by_state, sort_by_date, count_operations_by_categories, process_bank_search
+from src.processing import count_operations_by_categories, filter_by_state, process_bank_search, sort_by_date
 
 
 def test_filter_right_by_state(right_date: list[dict]) -> None:
@@ -30,60 +30,55 @@ def test_count_operations_by_categories():
     transactions = [
         {"description": "Перевод организации", "amount": 100},
         {"description": "Открытие вклада", "amount": 200},
-        {"description": "Перевод с карты", "amount": 300}
+        {"description": "Перевод с карты", "amount": 300},
     ]
     categories = ["перевод", "вклад"]
     result = count_operations_by_categories(transactions, categories)
     assert result == {"перевод": 2, "вклад": 1}
 
     # Тест 2: Разный регистр
-    transactions = [
-        {"description": "ПЕРЕВОД БАНКУ", "amount": 100},
-        {"description": "Открытие Вклада", "amount": 200}
-    ]
+    transactions = [{"description": "ПЕРЕВОД БАНКУ", "amount": 100}, {"description": "Открытие Вклада", "amount": 200}]
     result = count_operations_by_categories(transactions, categories)
     assert result == {"перевод": 1, "вклад": 1}
 
     # Тест 3: Нет совпадений - ожидаем пустой словарь
-    transactions = [
-        {"description": "Оплата услуг", "amount": 100},
-        {"description": "Снятие наличных", "amount": 200}
-    ]
+    transactions = [{"description": "Оплата услуг", "amount": 100}, {"description": "Снятие наличных", "amount": 200}]
     result = count_operations_by_categories(transactions, categories)
     assert result == {}  # Изменили ожидание на пустой словарь
 
+
 def test_process_bank_search():
     transactions = [
-        {"description": "Перевод в Сбербанк", "amount": 100},      # содержит "банк"
-        {"description": "Оплата Тинькофф", "amount": 200},         # не содержит "банк"
-        {"description": "Перевод Альфа-Банк", "amount": 300},      # содержит "банк"
-        {"description": "Вклад в ВТБ", "amount": 400}              # не содержит "банк"
+        {"description": "Перевод в Сбербанк", "amount": 100},  # содержит "банк"
+        {"description": "Оплата Тинькофф", "amount": 200},  # не содержит "банк"
+        {"description": "Перевод Альфа-Банк", "amount": 300},  # содержит "банк"
+        {"description": "Вклад в ВТБ", "amount": 400},  # не содержит "банк"
     ]
 
-    # Тест 1: Поиск "перевод" (должен найти 2 операции)
+    # Поиск "перевод" (должен найти 2 операции)
     result = process_bank_search(transactions, "перевод")
     assert len(result) == 2
     assert result[0]["description"] == "Перевод в Сбербанк"
     assert result[1]["description"] == "Перевод Альфа-Банк"
 
-    # Тест 2: Поиск "банк" (должен найти 2 операции: Сбербанк, Альфа-Банк)
-    # ВТБ не содержит слово "банк" в описании!
+    # Поиск "банк" (должен найти 2 операции: Сбербанк, Альфа-Банк)
+    # ВТБ не содержит слово "банк" в описании.
     result = process_bank_search(transactions, "банк")
     assert len(result) == 2  # Исправлено с 3 на 2
 
-    # Тест 3: Поиск "сбербанк" (должен найти 1 операцию)
+    # Поиск "сбербанк" (должен найти 1 операцию)
     result = process_bank_search(transactions, "сбербанк")
     assert len(result) == 1
     assert result[0]["description"] == "Перевод в Сбербанк"
 
-    # Тест 4: Поиск "газпром" (не должно быть совпадений)
+    # Поиск "газпром" (не должно быть совпадений)
     result = process_bank_search(transactions, "газпром")
     assert len(result) == 0
 
-    # Тест 5: Поиск в верхнем регистре "СБЕРБАНК"
+    # Поиск в верхнем регистре "СБЕРБАНК"
     result = process_bank_search(transactions, "СБЕРБАНК")
     assert len(result) == 1
 
-    # Тест 6: Поиск "втб" (должен найти 1 операцию)
+    # Поиск "втб" (должен найти 1 операцию)
     result = process_bank_search(transactions, "втб")
     assert len(result) == 1
