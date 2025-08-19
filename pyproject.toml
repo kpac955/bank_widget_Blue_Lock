@@ -7,12 +7,10 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.13"
-home_work1
 python-dotenv = "^1.1.0"
 requests = "^2.32.3"
 pandas = "^2.3.0"
 openpyxl = "^3.1.5"
-develop
 
 
 [tool.poetry.group.lint.dependencies]
