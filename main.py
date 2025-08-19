@@ -53,3 +53,87 @@ def format_transaction(transaction: Dict[str, Any]) -> str:
     return result
 
 
+def main() -> None:
+    """Основная функция программы"""
+
+    print("Привет! Добро пожаловать в программу работы с банковскими транзакциями.\n"
+          "Выберите необходимый пункт меню:\n"
+          "1. Получить информацию о транзакциях из JSON-файла\n"
+          "2. Получить информацию о транзакциях из CSV-файла\n"
+          "3. Получить информацию о транзакциях из XLSX-файла")
+
+    # Ввод пользователя
+    user_choice = input("Пользователь: ").strip()
+
+    # Чтение файла
+    file_paths = {
+        "1": ("JSON", "data/operations.json", convert),
+        "2": ("CSV", "data/transactions.csv", read_csv_operations),
+        "3": ("XLSX", "data/transactions_excel.xlsx", read_xlsx_operations)
+    }
+
+    if user_choice not in file_paths:
+        print("Неверный выбор. Программа завершена")
+        return
+
+    file_type, default_path, reader_func = file_paths[user_choice]
+    print(f"Для обработки выбран {file_type}-файл.")
+
+    file_path = input(f'Введите путь к {file_type}-файлу: ').strip() or default_path
+
+    transactions = reader_func(file_path)
+
+    if not transactions:
+        print("Файл не найден или не содержит данных")
+        return
+
+    available_statuses = ["EXECUTED", "CANCELED", "PENDING"]
+
+    while True:
+        print("\nВведите статус, по которому необходимо выполнить фильтрацию.")
+        print(f"Доступные для фильтровки статусы: {', '.join(available_statuses)}")
+
+        user_state = input("Пользователь: ").strip().upper()
+
+        if user_state in available_statuses:
+            print(f'Операции отфильтрованы по статусу "{user_state}"')
+            filtered_transactions = filter_by_state(transactions, user_state)
+            break
+        else:
+            print(f'Статус операции "{user_state}" недоступен.')
+
+    # Сортировка по дате
+    if normalize_answer(input("\nОтсортировать операции по дате? Да/Нет: ")):
+        sort_order = input("Отсортировать по возрастанию или по убыванию? ").strip().lower()
+        reverse = sort_order in ["по убыванию", "убыванию", "desc", "d"]
+        filtered_transactions = sort_by_date(filtered_transactions, reverse)
+
+    # Фильтрация по валюте
+    if normalize_answer(input("\nВыводить только рублевые транзакции? Да/Нет: ")):
+        filtered_transactions = [t for t in filtered_transactions
+                                 if t.get('operationAmount', {}).get('currency', {}).get('code') == 'RUB']
+
+    # Фильтрация по ключевому слову
+    if normalize_answer(input("\nОтфильтровать список транзакций по определенному слову в описании? Да/Нет: ")):
+        keyword = input("Введите слово для поиска: ").strip().lower()
+        filtered_transactions = [t for t in filtered_transactions
+                                 if keyword in t.get('description', '').lower()]
+
+    # Вывод результатов
+    print("\nРаспечатываю итоговый список транзакций...\n")
+
+    if not filtered_transactions:
+        print("Не найдено ни одной транзакции, подходящей под ваши условия фильтрации")
+        return
+
+    print(f"Всего банковских операций в выборке: {len(filtered_transactions)}\n")
+
+    for transaction in filtered_transactions:
+        print(format_transaction(transaction))
+        print()
+
+
+if __name__ == "__main__":
+    main()
+
+
